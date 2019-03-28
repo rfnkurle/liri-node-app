@@ -13,10 +13,10 @@ UserInputs();
 
 
 function UserInputs() {
-
+//switch case takes in functions into commands for node
     switch (inputInfo) {
         case "concert-this":
-            concertInfo();
+            concertInfo(userOption);
             break;
         case "spotify-this-song":
             spotifyThis(userOption);
@@ -32,13 +32,13 @@ function UserInputs() {
 
     }
 }
-
+//function for concert info. Nickelback concert info if user fails to name an artist 
 function concertInfo(userOption) {
     var moment = require('moment'); moment().format();
-    var userOption = process.argv.slice(3).join(" ");
+    // var userOption = process.argv.slice(3).join(" ");
     if (!userOption) {
         userOption = "Nickelback";
-    }
+    } 
     axios.get("https://rest.bandsintown.com/artists/" + userOption + "/events?app_id=codingbootcamp")
         .then(function (response) {
             for (var i = 0; i < 1; i++) {
@@ -53,9 +53,9 @@ function concertInfo(userOption) {
         });
 }
 
+// spotify info on a song of user's choice
 function spotifyThis(userOption) {
-    var userOption = process.argv.slice(3).join(" ");
-    if (process.argv.length === 3) {
+    if (!userOption) {
         spotify.search({
             type: 'track',
             query: "the sign, ace of base",
@@ -70,7 +70,7 @@ function spotifyThis(userOption) {
             console.log(`Preview: ${data.tracks.items[0].preview_url}`)
             console.log(`Album: ${data.tracks.items[0].album.name}\n`)
             console.log("-------------------------------------")
-
+           
         })
     } else {
         spotify.search({
@@ -81,23 +81,25 @@ function spotifyThis(userOption) {
             if (err) {
                 return console.log('Error occurred: ' + err);
             }
+            
             console.log("-------------------------------------")
             console.log(`\n\nArtist(s): ${data.tracks.items[0].artists[0].name}`);
             console.log(`Song: ${data.tracks.items[0].name}`)
             console.log(`Preview: ${data.tracks.items[0].preview_url}`)
             console.log(`Album: ${data.tracks.items[0].album.name}\n`)
             console.log("-------------------------------------")
+            
 
         })
     }
 }
+// finds movies information based on user input
+function findMovie(userOption) {
 
-function findMovie(movieName) {
+    
+    var queryUrl = "http://www.omdbapi.com/?t=" + userOption + "&y=&plot=short&apikey=trilogy";
 
-    var movieName = userOption
-    var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
-
-    if (process.argv.length === 3){
+    if (!userOption){
     axios.get("http://www.omdbapi.com/?t=mr+nobody&y=&plot=short&apikey=trilogy").then(
         function (response) {
             console.log("-------------------------------------")
@@ -112,8 +114,8 @@ function findMovie(movieName) {
             console.log ("-------------------------------------")
 
         });
-    }
-     else { (process.argv.length === 3) 
+    } 
+     (process.argv.length === 3) 
         axios.get(queryUrl).then(
             function (response) {
                 console.log("-------------------------------------")
@@ -129,19 +131,34 @@ function findMovie(movieName) {
 
             }); 
         }
-}
+
+    
 
 
 
 
+// functions that reads random.txt in order to execute one of the above functions
 
 function doWhatISay() {
+    // reads random.txt and executes function
     fs.readFile('random.txt', 'utf8', function (err, data) {
         if (err) {
             return console.log(err);
-        }
-        var dataArr = data.split(',');
-        UserInputs(dataArr);
+
+        } 
+       
+        var dataArr = data.split(",");
+        inputInfo = dataArr[0];
+        userOption = dataArr[1].trim();
+        UserInputs();
+        console.log(userOption)
+
+        
+        
+        
     });
+    
+      
 }
+
 
